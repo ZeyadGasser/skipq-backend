@@ -1,0 +1,7 @@
+export const ACCOUNT_STATUS = {
+  ACTIVE: 1,
+  INACTIVE: 2,
+  PENDING: 3,
+  SUSPENDED: 4,
+  REJECTED: 5,
+};
