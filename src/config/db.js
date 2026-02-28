@@ -13,7 +13,7 @@ const sequelize = new Sequelize(
   },
 );
 
-const initConnectDb = async (retries = parseInt(process.env.MAX_ATTEMPS)) => {
+const initConnectDb = async (retries = parseInt(process.env.MAX_ATTEMPTS)) => {
   while (retries > 0) {
     try {
       await sequelize.authenticate();
