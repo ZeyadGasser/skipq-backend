@@ -10,6 +10,7 @@ import { orgController } from "../container.js";
 import { rateLimiter } from "../middlewares/rate.limiter.middleware.js";
 import { authController } from "../container.js";
 import { verifyRefreshToken } from "../middlewares/verifyRefreshToken.middleware.js";
+import { revokeRefreshToken } from "../middlewares/revokeRefreshToken.middleware.js";
 export const router = express.Router();
 // /api/auth/login
 router
@@ -42,9 +43,12 @@ router
 router
     .route("/refresh-token")
     .post(verifyRefreshToken(authController.AuthService));
+// /api/auth/logout
+router
+    .route("/logout")
+    .post(revokeRefreshToken(authController.AuthService));
 /*
 
-// /api/auth/logout
 
 
 
