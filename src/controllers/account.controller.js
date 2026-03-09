@@ -38,14 +38,15 @@ export class AccountController {
   sendResetPasswordEmail = async (req, res) => {
     try {
       // we  need a full queue system like BullMQ or Redis.
+     const account_id= req.organization.account_id;
       await this.accountService.sendResetPasswordEmail(
-        req.organization.account_id,
+        account_id
       );
       return ApiResponse.success(
         res,
         httpStatus.SUCCESSFULL,
         "Reset password email sent successfully",
-        { token },
+        { },
         httpStatus.OK,
       );
     } catch (error) {
@@ -57,17 +58,60 @@ export class AccountController {
     try {
       const password = req.body.password;
       const account = req.account;
-      console.log("acccount ", account);
       await this.accountService.resetPassword(account, password);
 
       return ApiResponse.success(
         res,
         httpStatus.SUCCESSFULL,
         "Reset password successfully",
+        {},
         httpStatus.OK,
       );
     } catch (error) {
       return _handleError(res, error);
     }
   };
+/**************************************************************/
+  generateOtp=async(req,res)=>{
+    try {
+      const account=req.account;
+      await this.accountService.generateOtp(account);
+      return ApiResponse.success(
+        res,
+        httpStatus.SUCCESSFULL,
+        "OTP has been sent to your registered email or phone number",
+        {},
+        httpStatus.OK,
+      );
+    } catch (error) {
+      return _handleError(res, error);
+    }
+  }
+/**************************************************************/
+verifyOtp=async(req,res)=>{
+  try {
+    const account_id= req.account_id;
+    const otp_id=req.otp_id;
+   const resetToken= await this.accountService.generateTokenForOtp(account_id,otp_id);
+    return ApiResponse.success(
+        res,
+        httpStatus.SUCCESSFULL,
+        "OTP verified successfully",
+        {resetToken},
+        httpStatus.OK,
+      );
+  } catch (error) {
+   return ApiResponse.error(
+                       res,
+                       httpStatus.ERROR,
+                        error.message || "Invalid or ex",
+                       httpStatus.BAD_REQUEST
+                   );
+  }
+}
+/**************************************************************/
+/**************************************************************/
+/**************************************************************/
+/**************************************************************/
+/**************************************************************/
 }

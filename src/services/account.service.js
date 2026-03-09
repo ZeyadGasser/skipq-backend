@@ -10,11 +10,12 @@ import { sendEmail } from "../utils/sendEmail.js";
 import { sequelize } from "../config/db.js";
 import { setTimeout } from "timers/promises";
 export class AccountService {
-  constructor(accountRepository, userService, tokenRepository,authService) {
+  constructor(accountRepository, userService, tokenRepository,authService,otpRepository) {
     this.accountRepository = accountRepository;
     this.userService = userService;
     this.tokenRepository = tokenRepository;
     this.authService = authService;
+    this.otpRepository = otpRepository;
   }
   async createAccount(accountData, transaction) {
     //// Using `this` to access class properties and methods correctly within the class; without `this`, JavaScript will treat them as undefined local variables
@@ -160,7 +161,7 @@ export class AccountService {
       expires_at: expiresAt,
     });
 
-    const resetLink = ` ${process.env.APP_BASE_URL}${resetToken}`;
+    const resetLink = `${process.env.APP_BASE_URL}${resetToken}`;
 
     let attempts = 0;
     let sent = false;
@@ -211,4 +212,84 @@ export class AccountService {
   }
 
   /*********************************************************************** */
+  async getAccountByEmail(account_email){
+    return this.accountRepository.getAccountByEmail(account_email);
+  }
+    /*********************************************************************** */
+    async sendOtpEmailWithRetry(email, otp_code) {
+  let attempts = 0;
+  let sent = false;
+
+  while (attempts < 3 && !sent) {
+    try {
+      attempts++;
+      await sendEmail(
+        email,
+        "Your OTP Code",
+        `Your OTP code is: ${otp_code}. It expires in 5 minutes.`
+      );
+      sent = true;
+    } catch (error) {
+      console.error(`Attempt ${attempts} failed:`, error.message);
+
+      if (attempts === 3) {
+        throw new Error("Failed to send OTP email. Please try again later.");
+      }
+
+        await setTimeout(2000);
+    }
+  }
+}
+    /*********************************************************************** */
+    //Todo should move to Otp service layer
+  async generateOtp(account){
+    const accountOtp=await this.otpRepository.getLatestOtp(account.account_id);
+///start if 
+    if(!accountOtp|| accountOtp.expires_at < new Date()){
+      
+      const otp_code = Math.floor(100000 + Math.random() * 900000).toString();
+      const expires_at = new Date(Date.now() + 5 * 60 * 1000); 
+      await this.otpRepository.generateOtp(account.account_id, otp_code, expires_at);
+      await this.sendOtpEmailWithRetry(account.account_email, otp_code);
+   }///End if 
+   if(accountOtp &&accountOtp.attempts<5&& accountOtp.expires_at > new Date()){
+       await this.otpRepository.incrementAttempts(accountOtp.otp_id);
+       await this.sendOtpEmailWithRetry(account.account_email, accountOtp.otp_code);
+
+   }
+
+  }
+      /*********************************************************************** */
+async getOtpByAccountId(account_id){
+  return await this.otpRepository.getLatestOtp(account_id);
+}
+/*********************************************************************** */
+async generateTokenForOtp(account_id,otp_id){
+   const existingToken =
+      await this.tokenRepository.getValidResetTokenByAccountId(account_id);
+    if (existingToken) {
+      throw new Error("A reset request is already in process. Please try again later.");
+    }
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const tokenHash = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    await this.tokenRepository.createResetToken({
+      account_id,
+      token_hash: tokenHash,
+      expires_at: expiresAt,
+    });
+    await this.otpRepository.markAsUsed(otp_id);
+  return resetToken;
+}
+/*********************************************************************** */
+/*********************************************************************** */
+/*********************************************************************** */
+/*********************************************************************** */
+
 }

@@ -11,6 +11,8 @@ import { rateLimiter } from "../middlewares/rate.limiter.middleware.js";
 import { authController } from "../container.js";
 import { verifyRefreshToken } from "../middlewares/verifyRefreshToken.middleware.js";
 import { revokeRefreshToken } from "../middlewares/revokeRefreshToken.middleware.js";
+import { verifyAccount } from "../middlewares/verifyAccount.middleware.js";
+import { verifyOtp } from "../middlewares/verifyOtp.middleware.js";
 export const router = express.Router();
 // /api/auth/login
 router
@@ -47,14 +49,14 @@ router
 router
     .route("/logout")
     .post(revokeRefreshToken(authController.AuthService));
-/*
-
-
-
-
-
 // /api/auth/forgot-password
-router.post('/forgot-password', accountController.sendResetPasswordEmail);
-
-
-*/
+router
+      .route("/forgot-password")
+      .post(verifyAccount(accountController.accountService),accountController.generateOtp);
+///api/auth/verify-otp
+router
+  .route("/verify-otp")
+  .post(
+    verifyOtp(accountController.accountService),
+    accountController.verifyOtp
+  );
