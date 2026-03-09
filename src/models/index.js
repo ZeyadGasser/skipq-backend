@@ -16,6 +16,7 @@ import { Denomination } from "./denomination.model.js";
 import { ATMDenominationStock } from "./atm.denomination.stock.model.js";
 import { AccountResetToken } from "./account.reset.tokens.model.js";
 import { AccountRefreshToken } from "./account.refresh.tokens.model.js";
+import { AccountOTP } from "./account.otp.model.js";
 /**
  * [Circular Dependency ]
  * We define associations in a separate function called after all models are imported.
@@ -107,6 +108,10 @@ function setupAssociations() {
 
   Account.hasMany(AccountRefreshToken, { foreignKey: "account_id" });
   AccountRefreshToken.belongsTo(Account, { foreignKey: "account_id" });
+
+  // One-To-Many relationship: Account 
+Account.hasMany(AccountOTP, { foreignKey: "account_id" });
+AccountOTP.belongsTo(Account, { foreignKey: "account_id" });
 }
 
 export {
@@ -127,5 +132,7 @@ export {
   ATMDenominationStock,
   Denomination,
   AccountResetToken,
-  AccountRefreshToken
+  AccountRefreshToken,
+  AccountOTP,
+  
 };
