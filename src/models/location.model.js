@@ -10,43 +10,22 @@ Location.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    latitude: {
-      type: DataTypes.DECIMAL(10, 8),
+
+   
+    coordinates: {
+      type: DataTypes.GEOMETRY("POINT", 4326),
       allowNull: false,
       validate: {
-        notNull: { msg: "Latitude is required." },
-        isDecimal: { msg: "Latitude must be a decimal number." },
-        min: {
-          args: [-90],
-          msg: "Latitude must be between -90 and 90.",
-        },
-        max: {
-          args: [90],
-          msg: "Latitude must be between -90 and 90.",
-        },
+        notNull: { msg: "Coordinates are required." },
       },
     },
-    longitude: {
-      type: DataTypes.DECIMAL(11, 8),
+
+    governorate_id: {
+      type: DataTypes.BIGINT,
       allowNull: false,
       validate: {
-        notNull: { msg: "Longitude is required." },
-        isDecimal: { msg: "Longitude must be a decimal number." },
-        min: {
-          args: [-180],
-          msg: "Longitude must be between -180 and 180.",
-        },
-        max: {
-          args: [180],
-          msg: "Longitude must be between -180 and 180.",
-        },
-      },
-    },
-    governorate: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: { msg: "Governorate name cannot be empty." },
+        notNull: { msg: "Governorate ID is required." },
+        isInt: { msg: "Governorate ID must be an integer." },
       },
     },
   },
@@ -55,7 +34,7 @@ Location.init(
     modelName: "Location",
     tableName: "locations",
     timestamps: false,
-  },
+  }
 );
 
 export { Location };

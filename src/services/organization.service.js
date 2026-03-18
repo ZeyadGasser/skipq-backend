@@ -1,10 +1,11 @@
 import { sequelize } from "../config/db.js";
 
 export class OrganizationService {
-  constructor(organizationRepository, accountService, locationService) {
+  constructor(organizationRepository, accountService, locationService,governorateRepository) {
     this.accountService = accountService;
     this.locationService = locationService;
     this.organizationRepository = organizationRepository;
+    this.governorateRepository=governorateRepository
   }
   /*************************************************************************************** */
 
@@ -12,6 +13,13 @@ export class OrganizationService {
     const organization_id = await sequelize.transaction(async (t) => {
       const account_id = await this.accountService.createAccount(orgData, t);
 
+      const governorate_id=await this.governorateRepository.findByCoordinates(orgData.location.longitude,orgData.location.latitude);
+      if (!governorate_id) {
+        
+         throw new Error("Location provided is outside supported governorates.");
+      }
+      orgData.location.governorate_id=governorate_id;
+      
       const location_id = await this.locationService.createLocation(
         orgData.location,
         t,

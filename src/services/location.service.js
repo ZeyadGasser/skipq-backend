@@ -9,7 +9,7 @@ export class LocationService {
     const dataToSave = {
       latitude: locationData.latitude,
       longitude: locationData.longitude,
-      governorate: locationData.governorate,
+      governorate_id: locationData.governorate_id,
     };
 
     const createdLocation = await this.locationRepository.createLocation(

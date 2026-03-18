@@ -33,9 +33,7 @@ const signupSchema = Joi.object({
   location: Joi.object({
     latitude: Joi.number().required(),
     longitude: Joi.number().required(),
-    governorate: Joi.string().required().messages({
-      "string.empty": "Governorate name cannot be empty",
-    }),
+   
   })
     .required()
     .messages({

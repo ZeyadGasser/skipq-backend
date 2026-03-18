@@ -46,6 +46,13 @@ import { AuthController } from "./controllers/auth.controller.js";
 
 import { OtpRepository } from "./repositories/otp.repository.js"; 
 
+import { BranchRepository } from "./repositories/branch.repository.js";
+import { BranchController } from "./controllers/branch.controller.js";
+import { BranchService } from "./services/branch.service.js";
+
+import { GovernorateRepository } from "./repositories/governorate.repository.js";
+
+
 /*******************************
  * CREATE SINGLETON INSTANCES
  *******************************/
@@ -74,7 +81,8 @@ export const accountService = new AccountService(
   otpRepository
 );
 export const accountController = new AccountController(accountService);
-
+/***** Governorate *****/
+const governorateRepository=new GovernorateRepository();
 /***** LOCATION *****/
 const locationRepo = new LocationRepository();
 export const locationService = new LocationService(locationRepo);
@@ -84,9 +92,17 @@ const orgRepo = new OrganizationRepository();
 const orgService = new OrganizationService(
   orgRepo,
   accountService,
-  locationService
+  locationService,
+  governorateRepository
 );
 export const orgController = new OrganizationController(orgService);
+
+/***** BRANCHES *****/
+const branchRepository=new BranchRepository();
+const branchService=new BranchService(branchRepository,governorateRepository);
+export const branchController=new BranchController(branchService);
+
+
 
 /************************************************************************************************
  * TECHNICAL OBSERVATION (Scalability Note):
