@@ -2,20 +2,18 @@
 
 ## Project Overview
 
-SkipQ is a robust JavaScript backend project designed to facilitate efficient queue management in modern applications. Leveraging the power of Node.js, this backend aims to handle real-time data processing and provide a seamless experience for users.
+SkipQ is a JavaScript backend project designed to facilitate efficient queue management in high-traffic environments such as government services and public institutions. Leveraging the power of Node.js, it handles real-time data processing and provides a seamless experience for users.
 
 ### Key Features:
-- **Event-Driven Architecture**: Built around an event-driven model, allowing for high concurrency and responsiveness.
-- **Scalability**: Easily scale the application by adding more resources to handle increased load.
-- **RESTful API**: Provides a RESTful API for easy integration with frontend applications.
-- **Database Integration**: Supports various databases (e.g., MongoDB, PostgreSQL) for flexible data storage.
-- **Authentication & Authorization**: Secure user authentication and role-based access control.
+- **RESTful API Architecture**: Designed using REST principles for efficient client-server communication.
+- **Layered Architecture**: Organized into controllers, services, repositories, and models for clean separation of concerns.
+- **Scalability**: The application can be scaled by improving infrastructure and optimizing performance.
+- **Non-blocking I/O**: Leverages Node.js asynchronous nature with async/await for efficient handling of database and API operations.
 
 ### Technologies Used:
 - **Node.js**: Asynchronous JavaScript runtime for building scalable network applications.
 - **Express.js**: Web application framework for Node.js.
-- **MongoDB**: NoSQL database for data storage.
-- **Docker**: Containerization for consistent development, testing, and production environments.
+- **PostgreSQL**: SQL database for data storage.
 
 ### Getting Started:
 1. Clone the repository:
@@ -35,6 +33,3 @@ SkipQ is a robust JavaScript backend project designed to facilitate efficient qu
 
 ### Contribution:
 Contributions are welcome! Please open an issue or submit a pull request to improve the project.
-
-### License:
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
