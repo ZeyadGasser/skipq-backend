@@ -22,5 +22,50 @@ export class BranchService{
     
     return await this.branchRepository.findNearbyBranches(searchParams);
 
-   }//End findNearbyBranches(searchParams)
+   };//End findNearbyBranches(searchParams)
+
+  findServices = async (cleanedQuery) => {
+    const { orgId, branchId, page, limit, name } = cleanedQuery;
+
+    // 1. (Optional but recommended) validate branch exists under org
+    const branch = await this.branchRepository.findById(branchId);
+
+    if (!branch || branch.org_id !== orgId) {
+        throw new CustomError(
+            "Branch not found under this organization",
+            httpStatus.NOT_FOUND
+        );
+    }
+
+    // 2. build filters
+    const filters = {
+        branchId,
+        name,
+        offset: (page - 1) * limit,
+        limit
+    };
+
+   
+    const services = await this.branchRepository.findServices(filters);
+
+    return services;
+   };//End findServices
+
+
+    findAllBanks = async (cleanedQuery) => {
+    const { orgId, page, limit,searchValue} = cleanedQuery;
+
+    const filters = {
+        orgId,
+        offset: (page - 1) * limit,
+        limit,
+        searchValue
+    };
+
+    const banks = await this.branchRepository.findAllBanks(filters);
+
+    return banks;
+      
+    }; // End findAllBanks
+
 }

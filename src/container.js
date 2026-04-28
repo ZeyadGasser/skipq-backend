@@ -52,6 +52,10 @@ import { BranchService } from "./services/branch.service.js";
 
 import { GovernorateRepository } from "./repositories/governorate.repository.js";
 
+import {AtmRepository} from "./repositories/atm.repository.js";
+import {AtmService}from "./services/atm.service.js";
+import {AtmController} from "./controllers/atm.controller.js";
+
 
 /*******************************
  * CREATE SINGLETON INSTANCES
@@ -83,6 +87,11 @@ export const accountService = new AccountService(
 export const accountController = new AccountController(accountService);
 /***** Governorate *****/
 const governorateRepository=new GovernorateRepository();
+/*********ATM************ */
+const atmRepository =new AtmRepository();
+const atmService=new AtmService(atmRepository,governorateRepository);
+export const atmController=new AtmController(atmService);
+
 /***** LOCATION *****/
 const locationRepo = new LocationRepository();
 export const locationService = new LocationService(locationRepo);
