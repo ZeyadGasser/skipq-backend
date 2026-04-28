@@ -23,15 +23,6 @@ ATM.init(
         },
       },
     },
-    isActive: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true,
-      validate: {
-        isBoolean: {
-          msg: "isActive must be a boolean value.",
-        },
-      },
-    },
     allows_withdrawal: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
@@ -47,6 +38,15 @@ ATM.init(
       validate: {
         isBoolean: {
           msg: "allows_deposit must be a boolean value.",
+        },
+      },
+    },
+        atm_name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "ATM name cannot be empty.",
         },
       },
     },

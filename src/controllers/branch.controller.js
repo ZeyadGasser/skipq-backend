@@ -28,4 +28,51 @@ export class BranchController{
         }
     };//End getNearbyBranches
 
+
+    getServices = async (req, res) => {
+        try {
+          
+           const services = await this.branchService.findServices(req.cleanedQuery);
+
+            return ApiResponse.success(
+                res,
+                httpStatus.SUCCESSFULL,
+                "Services fetched successfully",
+                { services },
+                httpStatus.OK
+            );
+
+        } catch (error) {
+            handleControllerError(res, error);
+        }
+    };//End getServices
+  
+
+    getAllBanks = async (req, res) => {
+    try {
+        const { orgId } = req.params;
+        const { page = 1, limit = 10,search } = req.query;
+        const searchValue = search?.trim();
+        const cleanedQuery = {
+        orgId,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        searchValue
+        };
+
+        const banks = await this.branchService.findAllBanks(cleanedQuery);
+
+        return ApiResponse.success(
+        res,
+        httpStatus.SUCCESSFULL,
+        "Banks fetched successfully",
+        { banks },
+        httpStatus.OK
+        );
+
+    } catch (error) {
+        handleControllerError(res, error);
+    }
+    }; // End getAllBanks
+
 };

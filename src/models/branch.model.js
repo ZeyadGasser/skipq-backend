@@ -57,6 +57,16 @@ Branch.init(
         notEmpty: { msg: "Organization abbreviation is required." },
       },
     },
+        logo_url: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      validate: {
+        isUrl: {
+          msg: "Logo URL must be a valid URL."
+        }
+      }
+    },
+    
   },
   {
     sequelize,

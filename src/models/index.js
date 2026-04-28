@@ -6,14 +6,7 @@ import { AccountStatus } from "./account.status.model.js";
 import { AccountType } from "./account.type.model.js";
 import { Account } from "./account.model.js";
 import { Location } from "./location.model.js";
-import { CameraConfiguration } from "./camera.configuration.model.js";
-import { CameraView } from "./camera.view.model.js";
-import { ViewTarget } from "./view.target.model.js";
-import { ViewType } from "./view.type.model.js";
-import { Service } from "./service.model.js";
 import { ATM } from "./atm.model.js";
-import { Denomination } from "./denomination.model.js";
-import { ATMDenominationStock } from "./atm.denomination.stock.model.js";
 import { AccountResetToken } from "./account.reset.tokens.model.js";
 import { AccountRefreshToken } from "./account.refresh.tokens.model.js";
 import { AccountOTP } from "./account.otp.model.js";
@@ -64,26 +57,6 @@ function setupAssociations() {
   Organization.belongsTo(Location, { foreignKey: "location_id" });
   Location.hasOne(Organization, { foreignKey: "location_id" });
 
-  // One-To-One relationship
-  CameraConfiguration.belongsTo(Branch, { foreignKey: "branch_id" });
-  Branch.hasOne(CameraConfiguration, { foreignKey: "branch_id" });
-
-  // One-To-Many relationship
-  CameraConfiguration.hasMany(CameraView, { foreignKey: "camera_config_id" });
-  CameraView.belongsTo(CameraConfiguration, { foreignKey: "camera_config_id" });
-
-  // One-To-Many: One Target can be seen by multiple Camera Views
-  CameraView.belongsTo(ViewTarget, { foreignKey: "target_id" });
-  ViewTarget.hasMany(CameraView, { foreignKey: "target_id" });
-
-  // One-To-Many relationship
-  ViewTarget.belongsTo(ViewType, { foreignKey: "type_id" });
-  ViewType.hasMany(ViewTarget, { foreignKey: "type_id" });
-
-  // One-To-Many relationship
-  CameraView.hasMany(Service, { foreignKey: "camera_view_id" });
-  Service.belongsTo(CameraView, { foreignKey: "camera_view_id" });
-
   // One-To-Many relationship
   Branch.hasMany(ATM, { foreignKey: "branch_id" });
   ATM.belongsTo(Branch, { foreignKey: "branch_id" });
@@ -91,18 +64,6 @@ function setupAssociations() {
   // One-To-One relationship
   ATM.belongsTo(Location, { foreignKey: "location_id" });
   Location.hasOne(ATM, { foreignKey: "location_id" });
-
-  // Many-To-Many relationship
-  ATM.belongsToMany(Denomination, {
-    through: ATMDenominationStock,
-    foreignKey: "atm_id",
-    otherKey: "denomination_id",
-  });
-  Denomination.belongsToMany(ATM, {
-    through: ATMDenominationStock,
-    foreignKey: "denomination_id",
-    otherKey: "atm_id",
-  });
 
   Account.hasMany(AccountResetToken, { foreignKey: "account_id" });
   AccountResetToken.belongsTo(Account, { foreignKey: "account_id" });
@@ -129,14 +90,7 @@ export {
   Account,
   Location,
   Governorate,
-  CameraConfiguration,
-  CameraView,
-  ViewTarget,
-  ViewType,
-  Service,
   ATM,
-  ATMDenominationStock,
-  Denomination,
   AccountResetToken,
   AccountRefreshToken,
   AccountOTP,
