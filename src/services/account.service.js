@@ -10,7 +10,13 @@ import { sendEmail } from "../utils/sendEmail.js";
 import { sequelize } from "../config/db.js";
 import { setTimeout } from "timers/promises";
 export class AccountService {
-  constructor(accountRepository, userService, tokenRepository,authService,otpRepository) {
+  constructor(
+    accountRepository,
+    userService,
+    tokenRepository,
+    authService,
+    otpRepository,
+  ) {
     this.accountRepository = accountRepository;
     this.userService = userService;
     this.tokenRepository = tokenRepository;
@@ -55,23 +61,28 @@ export class AccountService {
 
     const refreshPayload = {
       account_email: targetAccount.account_email,
-      role_id:role_id,
+      role_id: role_id,
     };
-    const Account=await this.accountRepository.getAccountByEmail(targetAccount.account_email);
+    const Account = await this.accountRepository.getAccountByEmail(
+      targetAccount.account_email,
+    );
     const refreshToken_ = generateRefreshToken(refreshPayload);
-    const refreshTokenHash = crypto.createHash('sha256').update(refreshToken_).digest('hex');
+    const refreshTokenHash = crypto
+      .createHash("sha256")
+      .update(refreshToken_)
+      .digest("hex");
     await this.authService.saveRefreshToken({
-        account_id: Account.account_id, 
-        tokenHash: refreshTokenHash
-    });   
-     return {
+      account_id: Account.account_id,
+      tokenHash: refreshTokenHash,
+    });
+    return {
       accessToken: accessToken_,
       refreshToken: refreshToken_,
     };
   }
   /******************************************************************************* */
- //TODO Should move from here 
- 
+  //TODO Should move from here
+
   async auth_service(account_email, password) {
     const targetAccount =
       await this.accountRepository.getAccountByEmail(account_email);
@@ -212,63 +223,75 @@ export class AccountService {
   }
 
   /*********************************************************************** */
-  async getAccountByEmail(account_email){
+  async getAccountByEmail(account_email) {
     return this.accountRepository.getAccountByEmail(account_email);
   }
-    /*********************************************************************** */
-    async sendOtpEmailWithRetry(email, otp_code) {
-  let attempts = 0;
-  let sent = false;
+  /*********************************************************************** */
+  async sendOtpEmailWithRetry(email, otp_code) {
+    let attempts = 0;
+    let sent = false;
 
-  while (attempts < 3 && !sent) {
-    try {
-      attempts++;
-      await sendEmail(
-        email,
-        "Your OTP Code",
-        `Your OTP code is: ${otp_code}. It expires in 5 minutes.`
-      );
-      sent = true;
-    } catch (error) {
-      console.error(`Attempt ${attempts} failed:`, error.message);
+    while (attempts < 3 && !sent) {
+      try {
+        attempts++;
+        await sendEmail(
+          email,
+          "Your OTP Code",
+          `Your OTP code is: ${otp_code}. It expires in 5 minutes.`,
+        );
+        sent = true;
+      } catch (error) {
+        console.error(`Attempt ${attempts} failed:`, error.message);
 
-      if (attempts === 3) {
-        throw new Error("Failed to send OTP email. Please try again later.");
-      }
+        if (attempts === 3) {
+          throw new Error("Failed to send OTP email. Please try again later.");
+        }
 
         await setTimeout(2000);
+      }
     }
   }
-}
-    /*********************************************************************** */
-    //Todo should move to Otp service layer
-  async generateOtp(account){
-    const accountOtp=await this.otpRepository.getLatestOtp(account.account_id);
-///start if 
-    if(!accountOtp|| accountOtp.expires_at < new Date()){
-      
+  /*********************************************************************** */
+  //Todo should move to Otp service layer
+  async generateOtp(account) {
+    const accountOtp = await this.otpRepository.getLatestOtp(
+      account.account_id,
+    );
+    ///start if
+    if (!accountOtp || accountOtp.expires_at < new Date()) {
       const otp_code = Math.floor(100000 + Math.random() * 900000).toString();
-      const expires_at = new Date(Date.now() + 5 * 60 * 1000); 
-      await this.otpRepository.generateOtp(account.account_id, otp_code, expires_at);
+      const expires_at = new Date(Date.now() + 5 * 60 * 1000);
+      await this.otpRepository.generateOtp(
+        account.account_id,
+        otp_code,
+        expires_at,
+      );
       await this.sendOtpEmailWithRetry(account.account_email, otp_code);
-   }///End if 
-   if(accountOtp &&accountOtp.attempts<5&& accountOtp.expires_at > new Date()){
-       await this.otpRepository.incrementAttempts(accountOtp.otp_id);
-       await this.sendOtpEmailWithRetry(account.account_email, accountOtp.otp_code);
-
-   }
-
+    } ///End if
+    if (
+      accountOtp &&
+      accountOtp.attempts < 5 &&
+      accountOtp.expires_at > new Date()
+    ) {
+      await this.otpRepository.incrementAttempts(accountOtp.otp_id);
+      await this.sendOtpEmailWithRetry(
+        account.account_email,
+        accountOtp.otp_code,
+      );
+    }
   }
-      /*********************************************************************** */
-async getOtpByAccountId(account_id){
-  return await this.otpRepository.getLatestOtp(account_id);
-}
-/*********************************************************************** */
-async generateTokenForOtp(account_id,otp_id){
-   const existingToken =
+  /*********************************************************************** */
+  async getOtpByAccountId(account_id) {
+    return await this.otpRepository.getLatestOtp(account_id);
+  }
+  /*********************************************************************** */
+  async generateTokenForOtp(account_id, otp_id) {
+    const existingToken =
       await this.tokenRepository.getValidResetTokenByAccountId(account_id);
     if (existingToken) {
-      throw new Error("A reset request is already in process. Please try again later.");
+      throw new Error(
+        "A reset request is already in process. Please try again later.",
+      );
     }
 
     const resetToken = crypto.randomBytes(32).toString("hex");
@@ -285,11 +308,10 @@ async generateTokenForOtp(account_id,otp_id){
       expires_at: expiresAt,
     });
     await this.otpRepository.markAsUsed(otp_id);
-  return resetToken;
-}
-/*********************************************************************** */
-/*********************************************************************** */
-/*********************************************************************** */
-/*********************************************************************** */
-
+    return resetToken;
+  }
+  /*********************************************************************** */
+  /*********************************************************************** */
+  /*********************************************************************** */
+  /*********************************************************************** */
 }

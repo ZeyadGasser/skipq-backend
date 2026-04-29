@@ -43,20 +43,21 @@ router
   );
 // api/auth/refresh-token
 router
-    .route("/refresh-token")
-    .post(verifyRefreshToken(authController.AuthService));
+  .route("/refresh-token")
+  .post(verifyRefreshToken(authController.AuthService));
 // /api/auth/logout
-router
-    .route("/logout")
-    .post(revokeRefreshToken(authController.AuthService));
+router.route("/logout").post(revokeRefreshToken(authController.AuthService));
 // /api/auth/forgot-password
 router
-      .route("/forgot-password")
-      .post(verifyAccount(accountController.accountService),accountController.generateOtp);
+  .route("/forgot-password")
+  .post(
+    verifyAccount(accountController.accountService),
+    accountController.generateOtp,
+  );
 ///api/auth/verify-otp
 router
   .route("/verify-otp")
   .post(
     verifyOtp(accountController.accountService),
-    accountController.verifyOtp
+    accountController.verifyOtp,
   );

@@ -17,7 +17,6 @@ export const validateLoginCredentials = async (req, res, next) => {
       );
     }
 
-
     const targetAccount = await accountService.auth_service(
       account_email,
       password,

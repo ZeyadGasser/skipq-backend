@@ -33,7 +33,6 @@ const signupSchema = Joi.object({
   location: Joi.object({
     latitude: Joi.number().required(),
     longitude: Joi.number().required(),
-   
   })
     .required()
     .messages({

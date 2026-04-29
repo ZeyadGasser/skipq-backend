@@ -6,16 +6,16 @@ import { NationalBankProvider } from "./banks/nationalBankProvider.js";
 */
 export const BankProviderFactory = {
   get(bank_id) {
-   const keyProvider=BANK_MAPPER[bank_id];
+    const keyProvider = BANK_MAPPER[bank_id];
     switch (keyProvider) {
       case "NATIONAL_BANK":
         return new NationalBankProvider();
 
-     /* case "BANQUE_MISR":
+      /* case "BANQUE_MISR":
         return new BanqueMisrProvider();
         */
       default:
         throw new Error("Unsupported bank provider");
     }
-  }
+  },
 };

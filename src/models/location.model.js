@@ -11,7 +11,6 @@ Location.init(
       autoIncrement: true,
     },
 
-   
     coordinates: {
       type: DataTypes.GEOMETRY("POINT", 4326),
       allowNull: false,
@@ -34,7 +33,7 @@ Location.init(
     modelName: "Location",
     tableName: "locations",
     timestamps: false,
-  }
+  },
 );
 
 export { Location };

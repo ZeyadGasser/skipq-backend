@@ -25,7 +25,7 @@ export class GovernorateRepository extends IGovernorateRepository {
 
   async findByCoordinates(longitude, latitude) {
     const governorate = await GovernorateModel.findOne({
-      attributes: ['governorate_id'],
+      attributes: ["governorate_id"],
       where: sequelize.where(
         sequelize.fn(
           "ST_Covers",
@@ -35,17 +35,17 @@ export class GovernorateRepository extends IGovernorateRepository {
             sequelize.fn(
               "ST_Point",
               parseFloat(longitude),
-              parseFloat(latitude)
+              parseFloat(latitude),
             ),
-            4326
-          )
+            4326,
+          ),
         ),
-        true
+        true,
       ),
-      raw: true
+      raw: true,
     });
 
-   return governorate ? governorate.governorate_id : null;
+    return governorate ? governorate.governorate_id : null;
   } //End findByCoordinates()
 
   async getAllGovernorates() {

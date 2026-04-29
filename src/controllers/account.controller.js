@@ -17,17 +17,17 @@ export class AccountController {
       };
 
       const token = await this.accountService.login({ targetAccount });
-        res.cookie('refreshToken', token.refreshToken, {
-            httpOnly: true,     // Prevents client-side scripts from accessing the cookie (XSS protection)
-            secure: true,       // Ensures the cookie is sent only over HTTPS
-            sameSite: 'Strict',  // Prevents the browser from sending the cookie with cross-site requests (CSRF protection)
-            maxAge: 7 * 24 * 60 * 60 * 1000 // Automatically deletes the cookie from the browser after 7 days
-        });
+      res.cookie("refreshToken", token.refreshToken, {
+        httpOnly: true, // Prevents client-side scripts from accessing the cookie (XSS protection)
+        secure: true, // Ensures the cookie is sent only over HTTPS
+        sameSite: "Strict", // Prevents the browser from sending the cookie with cross-site requests (CSRF protection)
+        maxAge: 7 * 24 * 60 * 60 * 1000, // Automatically deletes the cookie from the browser after 7 days
+      });
       return ApiResponse.success(
         res,
         httpStatus.SUCCESSFULL,
         "Logged in successfully",
-        {  accessToken: token.accessToken },
+        { accessToken: token.accessToken },
         httpStatus.OK,
       );
     } catch (error) {
@@ -38,15 +38,13 @@ export class AccountController {
   sendResetPasswordEmail = async (req, res) => {
     try {
       // we  need a full queue system like BullMQ or Redis.
-     const account_id= req.organization.account_id;
-      await this.accountService.sendResetPasswordEmail(
-        account_id
-      );
+      const account_id = req.organization.account_id;
+      await this.accountService.sendResetPasswordEmail(account_id);
       return ApiResponse.success(
         res,
         httpStatus.SUCCESSFULL,
         "Reset password email sent successfully",
-        { },
+        {},
         httpStatus.OK,
       );
     } catch (error) {
@@ -71,10 +69,10 @@ export class AccountController {
       return _handleError(res, error);
     }
   };
-/**************************************************************/
-  generateOtp=async(req,res)=>{
+  /**************************************************************/
+  generateOtp = async (req, res) => {
     try {
-      const account=req.account;
+      const account = req.account;
       await this.accountService.generateOtp(account);
       return ApiResponse.success(
         res,
@@ -86,32 +84,35 @@ export class AccountController {
     } catch (error) {
       return _handleError(res, error);
     }
-  }
-/**************************************************************/
-verifyOtp=async(req,res)=>{
-  try {
-    const account_id= req.account_id;
-    const otp_id=req.otp_id;
-   const resetToken= await this.accountService.generateTokenForOtp(account_id,otp_id);
-    return ApiResponse.success(
+  };
+  /**************************************************************/
+  verifyOtp = async (req, res) => {
+    try {
+      const account_id = req.account_id;
+      const otp_id = req.otp_id;
+      const resetToken = await this.accountService.generateTokenForOtp(
+        account_id,
+        otp_id,
+      );
+      return ApiResponse.success(
         res,
         httpStatus.SUCCESSFULL,
         "OTP verified successfully",
-        {resetToken},
+        { resetToken },
         httpStatus.OK,
       );
-  } catch (error) {
-   return ApiResponse.error(
-                       res,
-                       httpStatus.ERROR,
-                        error.message || "Invalid or ex",
-                       httpStatus.BAD_REQUEST
-                   );
-  }
-}
-/**************************************************************/
-/**************************************************************/
-/**************************************************************/
-/**************************************************************/
-/**************************************************************/
+    } catch (error) {
+      return ApiResponse.error(
+        res,
+        httpStatus.ERROR,
+        error.message || "Invalid or ex",
+        httpStatus.BAD_REQUEST,
+      );
+    }
+  };
+  /**************************************************************/
+  /**************************************************************/
+  /**************************************************************/
+  /**************************************************************/
+  /**************************************************************/
 }

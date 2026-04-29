@@ -4,7 +4,7 @@ import express from "express";
 import { initConnectDb } from "./config/db.js";
 import { corsMiddleware } from "./middlewares/cors.middleware.js";
 import { mapRoutes } from "./routes/index.js";
-import cookieParser from 'cookie-parser';
+import cookieParser from "cookie-parser";
 main();
 
 async function main() {

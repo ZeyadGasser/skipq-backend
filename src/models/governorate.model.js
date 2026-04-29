@@ -21,10 +21,9 @@ Governorate.init(
       },
     },
 
-    
     boundary: {
       type: DataTypes.GEOMETRY("POLYGON", 4326),
-      allowNull: false, 
+      allowNull: false,
       validate: {
         notNull: { msg: "Governorate boundary is required." },
       },
@@ -35,7 +34,7 @@ Governorate.init(
     modelName: "Governorate",
     tableName: "governorates",
     timestamps: false,
-  }
+  },
 );
 
 export { Governorate };

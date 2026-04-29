@@ -37,8 +37,8 @@ AccountRefreshToken.init(
     modelName: "AccountRefreshToken",
     tableName: "account_refresh_tokens",
     timestamps: true,
-    createdAt: 'created_at',
-   updatedAt: 'updated_at',
+    createdAt: "created_at",
+    updatedAt: "updated_at",
 
     indexes: [
       {
