@@ -44,6 +44,7 @@ const signupSchema = Joi.object({
   }),
 });
 
+
 export const validateSignupOrganization = (req, res, next) => {
   const { error } = signupSchema.validate(req.body);
   if (error) {

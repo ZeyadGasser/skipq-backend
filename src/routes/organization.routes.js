@@ -9,6 +9,7 @@ import { rateLimiter } from "../middlewares/rate.limiter.middleware.js";
 export const router = express.Router();
 // /api/organizations/signup
 router
+
   .route("/signup")
   .post(
     rateLimiter(60 * 60 * 1000, 10),

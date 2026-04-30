@@ -14,6 +14,7 @@ export class OrganizationController {
       const organization_id = await this.organizationService.createOrganization(
         req.body,
       );
+      
       return ApiResponse.success(
         res,
         httpStatus.SUCCESSFULL,
