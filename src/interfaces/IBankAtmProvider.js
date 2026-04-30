@@ -1,5 +1,4 @@
 export class IBankAtmProvider {
-  
   async getAtmDetails(atm_id) {
     throw new Error("Method not implemented: getAtmDetails");
   }

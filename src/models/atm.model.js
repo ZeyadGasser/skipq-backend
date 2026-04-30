@@ -41,7 +41,7 @@ ATM.init(
         },
       },
     },
-        atm_name: {
+    atm_name: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {

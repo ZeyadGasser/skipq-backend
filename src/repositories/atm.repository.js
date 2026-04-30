@@ -1,12 +1,10 @@
 import { QueryTypes } from "sequelize";
-import { sequelize } from "../config/db.js";  
+import { sequelize } from "../config/db.js";
 import { IAtmRepository } from "../interfaces/IAtmRepository.js";
 import { ATM } from "../models/atm.model.js";
 
 export class AtmRepository extends IAtmRepository {
-
   findNearbyAtms = async (searchParams) => {
-
     const { location, page, limit, governorate_id } = searchParams;
     const { lat, lng } = location;
 
@@ -40,12 +38,11 @@ export class AtmRepository extends IAtmRepository {
         lat,
         lng,
         limit,
-        offset
+        offset,
       },
-      type: QueryTypes.SELECT
+      type: QueryTypes.SELECT,
     });
-console.log(atms);
+    console.log(atms);
     return atms;
   }; // End findNearbyAtms
-
 }

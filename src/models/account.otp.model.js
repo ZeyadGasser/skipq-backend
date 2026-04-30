@@ -1,5 +1,5 @@
-import { DataTypes, Model } from "sequelize"; 
-import { sequelize } from "../config/db.js"; 
+import { DataTypes, Model } from "sequelize";
+import { sequelize } from "../config/db.js";
 
 class AccountOTP extends Model {}
 
@@ -34,7 +34,7 @@ AccountOTP.init(
 
     used_at: {
       type: DataTypes.DATE,
-      allowNull: true, 
+      allowNull: true,
     },
   },
   {

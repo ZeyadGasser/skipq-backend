@@ -1,7 +1,5 @@
-
-
-export class AuthController{
-    constructor(AuthService){
-        this.AuthService=AuthService;
-    }
+export class AuthController {
+  constructor(AuthService) {
+    this.AuthService = AuthService;
+  }
 }

@@ -1,5 +1,5 @@
-export class IAtmRepository{
-     findNearbyAtms = async (searchParams) => {
-          throw new Error("Method not implemented");
-     }
+export class IAtmRepository {
+  findNearbyAtms = async (searchParams) => {
+    throw new Error("Method not implemented");
+  };
 }

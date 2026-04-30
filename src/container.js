@@ -1,50 +1,50 @@
-/***************************************************************************************** 
- *** DEPENDENCY INJECTION & SINGLETON PATTERN CONFIGURATION *** 
- ***************************************************************************************** 
- * 
- * 1. WHAT IS THIS FILE? 
- * This is the "Container" or "Composition Root". Its job is to create all objects 
- * (Repositories, Services, Controllers) and connect them together in one place. 
- * 
- * 2. WHY USE SINGLETON PATTERN? 
- * Instead of creating a "new" service for every request, we create only ONE instance 
- * (Singleton) and reuse it. This saves memory (RAM) and improves performance. 
- * 
- * 3. WHY USE DEPENDENCY INJECTION (DI)? 
- * Instead of a Controller creating its own Service, we "Inject" the Service into 
- * the Controller's constructor. 
- * - Benefit: It makes the code "Decoupled" (not tightly locked together). 
- * - Benefit: It makes Testing very easy because we can inject "Mock" objects. 
- * 
- * 4. HOW IT WORKS: 
- * Repo -> Injected into Service -> Injected into Controller -> Exported to Routes. 
- * 
- *****************************************************************************************/ 
+/*****************************************************************************************
+ *** DEPENDENCY INJECTION & SINGLETON PATTERN CONFIGURATION ***
+ *****************************************************************************************
+ *
+ * 1. WHAT IS THIS FILE?
+ * This is the "Container" or "Composition Root". Its job is to create all objects
+ * (Repositories, Services, Controllers) and connect them together in one place.
+ *
+ * 2. WHY USE SINGLETON PATTERN?
+ * Instead of creating a "new" service for every request, we create only ONE instance
+ * (Singleton) and reuse it. This saves memory (RAM) and improves performance.
+ *
+ * 3. WHY USE DEPENDENCY INJECTION (DI)?
+ * Instead of a Controller creating its own Service, we "Inject" the Service into
+ * the Controller's constructor.
+ * - Benefit: It makes the code "Decoupled" (not tightly locked together).
+ * - Benefit: It makes Testing very easy because we can inject "Mock" objects.
+ *
+ * 4. HOW IT WORKS:
+ * Repo -> Injected into Service -> Injected into Controller -> Exported to Routes.
+ *
+ *****************************************************************************************/
 
 /*******************************
  * IMPORT REPOSITORIES, SERVICES, CONTROLLERS
  *******************************/
-import { OrganizationRepository } from "./repositories/organization.repository.js"; 
-import { OrganizationController } from "./controllers/organization.controller.js"; 
-import { OrganizationService } from "./services/organization.service.js"; 
+import { OrganizationRepository } from "./repositories/organization.repository.js";
+import { OrganizationController } from "./controllers/organization.controller.js";
+import { OrganizationService } from "./services/organization.service.js";
 
-import { AccountRepository } from "./repositories/account.repository.js"; 
-import { AccountController } from "./controllers/account.controller.js"; 
-import { AccountService } from "./services/account.service.js"; 
+import { AccountRepository } from "./repositories/account.repository.js";
+import { AccountController } from "./controllers/account.controller.js";
+import { AccountService } from "./services/account.service.js";
 
-import { LocationRepository } from "./repositories/location.repository.js"; 
-import { LocationService } from "./services/location.service.js"; 
+import { LocationRepository } from "./repositories/location.repository.js";
+import { LocationService } from "./services/location.service.js";
 
-import { UserService } from "./services/user.service.js"; 
-import { UserRepository } from "./repositories/user.repository.js"; 
+import { UserService } from "./services/user.service.js";
+import { UserRepository } from "./repositories/user.repository.js";
 
-import { TokenRepository } from "./repositories/token.repository.js"; 
+import { TokenRepository } from "./repositories/token.repository.js";
 
-import { AuthService } from "./services/auth.service.js"; 
-import { AuthRepository } from "./repositories/auth.repository.js"; 
-import { AuthController } from "./controllers/auth.controller.js"; 
+import { AuthService } from "./services/auth.service.js";
+import { AuthRepository } from "./repositories/auth.repository.js";
+import { AuthController } from "./controllers/auth.controller.js";
 
-import { OtpRepository } from "./repositories/otp.repository.js"; 
+import { OtpRepository } from "./repositories/otp.repository.js";
 
 import { BranchRepository } from "./repositories/branch.repository.js";
 import { BranchController } from "./controllers/branch.controller.js";
@@ -52,17 +52,16 @@ import { BranchService } from "./services/branch.service.js";
 
 import { GovernorateRepository } from "./repositories/governorate.repository.js";
 
-import {AtmRepository} from "./repositories/atm.repository.js";
-import {AtmService}from "./services/atm.service.js";
-import {AtmController} from "./controllers/atm.controller.js";
-
+import { AtmRepository } from "./repositories/atm.repository.js";
+import { AtmService } from "./services/atm.service.js";
+import { AtmController } from "./controllers/atm.controller.js";
 
 /*******************************
  * CREATE SINGLETON INSTANCES
  *******************************/
 
 /***** AUTH *****/
-const otpRepository=new OtpRepository();
+const otpRepository = new OtpRepository();
 /***** AUTH *****/
 const authRepository = new AuthRepository();
 const authService = new AuthService(authRepository);
@@ -82,15 +81,15 @@ export const accountService = new AccountService(
   userService,
   tokenRepository,
   authService,
-  otpRepository
+  otpRepository,
 );
 export const accountController = new AccountController(accountService);
 /***** Governorate *****/
-const governorateRepository=new GovernorateRepository();
+const governorateRepository = new GovernorateRepository();
 /*********ATM************ */
-const atmRepository =new AtmRepository();
-const atmService=new AtmService(atmRepository,governorateRepository);
-export const atmController=new AtmController(atmService);
+const atmRepository = new AtmRepository();
+const atmService = new AtmService(atmRepository, governorateRepository);
+export const atmController = new AtmController(atmService);
 
 /***** LOCATION *****/
 const locationRepo = new LocationRepository();
@@ -102,16 +101,17 @@ const orgService = new OrganizationService(
   orgRepo,
   accountService,
   locationService,
-  governorateRepository
+  governorateRepository,
 );
 export const orgController = new OrganizationController(orgService);
 
 /***** BRANCHES *****/
-const branchRepository=new BranchRepository();
-const branchService=new BranchService(branchRepository,governorateRepository);
-export const branchController=new BranchController(branchService);
-
-
+const branchRepository = new BranchRepository();
+const branchService = new BranchService(
+  branchRepository,
+  governorateRepository,
+);
+export const branchController = new BranchController(branchService);
 
 /************************************************************************************************
  * TECHNICAL OBSERVATION (Scalability Note):

@@ -4,16 +4,16 @@ import { _handleError } from "../utils/_handleError.js";
 
 export const verifyOtp = (accountService) => {
   return async (req, res, next) => {
-    try { 
+    try {
       const account_email = req.body.account_email;
-      const  otp_code = req.body.otp_code;
+      const otp_code = req.body.otp_code;
 
       if (!account_email || !otp_code) {
         return ApiResponse.error(
           res,
           httpStatus.ERROR,
           "Email and OTP are required",
-          httpStatus.BAD_REQUEST
+          httpStatus.BAD_REQUEST,
         );
       }
 
@@ -24,12 +24,12 @@ export const verifyOtp = (accountService) => {
           res,
           httpStatus.ERROR,
           "Invalid email or expired OTP",
-          httpStatus.BAD_REQUEST
+          httpStatus.BAD_REQUEST,
         );
       }
 
       const otpRecord = await accountService.getOtpByAccountId(
-        account.account_id
+        account.account_id,
       );
 
       if (!otpRecord || otpRecord.otp_code !== otp_code) {
@@ -37,7 +37,7 @@ export const verifyOtp = (accountService) => {
           res,
           httpStatus.ERROR,
           "Invalid email or expired OTP",
-          httpStatus.BAD_REQUEST
+          httpStatus.BAD_REQUEST,
         );
       }
 
@@ -46,12 +46,12 @@ export const verifyOtp = (accountService) => {
           res,
           httpStatus.ERROR,
           "Invalid email or expired OTP",
-          httpStatus.BAD_REQUEST
+          httpStatus.BAD_REQUEST,
         );
       }
 
       req.account_id = account.account_id;
-      req.otp_id=otpRecord.otp_id;
+      req.otp_id = otpRecord.otp_id;
 
       next();
     } catch (error) {

@@ -71,13 +71,13 @@ function setupAssociations() {
   Account.hasMany(AccountRefreshToken, { foreignKey: "account_id" });
   AccountRefreshToken.belongsTo(Account, { foreignKey: "account_id" });
 
-  // One-To-Many relationship: Account 
-Account.hasMany(AccountOTP, { foreignKey: "account_id" });
-AccountOTP.belongsTo(Account, { foreignKey: "account_id" });
+  // One-To-Many relationship: Account
+  Account.hasMany(AccountOTP, { foreignKey: "account_id" });
+  AccountOTP.belongsTo(Account, { foreignKey: "account_id" });
 
-// One-To-Many relationship
-Location.belongsTo(Governorate, { foreignKey: "governorate_id" });
-Governorate.hasMany(Location, { foreignKey: "governorate_id" });
+  // One-To-Many relationship
+  Location.belongsTo(Governorate, { foreignKey: "governorate_id" });
+  Governorate.hasMany(Location, { foreignKey: "governorate_id" });
 }
 
 export {
@@ -94,5 +94,4 @@ export {
   AccountResetToken,
   AccountRefreshToken,
   AccountOTP,
-  
 };
