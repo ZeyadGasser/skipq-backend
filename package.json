@@ -6,7 +6,7 @@
   "main": "app.js",
   "scripts": {
     "_": "nodemon src/app.js",
-    "test": "jest",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "format": "prettier --write \"src/**/*.js\""
   },
   "keywords": [],
