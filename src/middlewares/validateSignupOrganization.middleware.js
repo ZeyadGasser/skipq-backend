@@ -37,18 +37,30 @@ const signupSchema = Joi.object({
     .required()
     .messages({
       "any.required": "Organization location is required",
-    }),
+    }),  
 
-  org_picture: Joi.any().required().messages({
-    "any.required": "Organization logo is required",
-  }),
 });
 
 
 export const validateSignupOrganization = (req, res, next) => {
-  const { error } = signupSchema.validate(req.body);
+  if (req.body.location && typeof req.body.location === 'string') {
+    try {
+      req.body.location = JSON.parse(req.body.location);
+    } catch (e) {
+      const err = new Error("Invalid location format");
+      err.statusCode = 400;
+      return next(err);
+    }
+  }
+    const { error } = signupSchema.validate(req.body);
+
   if (error) {
     const err = new Error(error.details[0].message);
+    err.statusCode = 400;
+    return next(err);
+  }
+   if (!req.file) {
+    const err = new Error("Organization logo is required");
     err.statusCode = 400;
     return next(err);
   }

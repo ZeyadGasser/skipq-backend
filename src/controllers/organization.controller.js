@@ -2,6 +2,8 @@ import * as httpStatus from "../utils/http.status.js";
 import { OrganizationResponseDTO } from "../dtos/organization.dto.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { _handleError } from "../utils/_handleError.js";
+import fs from "fs";
+
 /*************************************************************************************** */
 export class OrganizationController {
   constructor(organizationService) {
@@ -11,10 +13,13 @@ export class OrganizationController {
   /************************************************************* */
   signupOrganization = async (req, res) => {
     try {
+      console.log("FILE:", req.file);
       const organization_id = await this.organizationService.createOrganization(
         req.body,
+         req.file
       );
-      
+
+
       return ApiResponse.success(
         res,
         httpStatus.SUCCESSFULL,
@@ -23,6 +28,11 @@ export class OrganizationController {
         httpStatus.CREATED,
       );
     } catch (error) {
+      if (req.file && req.file.path) {
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.log("Error deleting file:", err);
+      });
+    }
       return _handleError(res, error);
     }
   };

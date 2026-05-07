@@ -14,7 +14,7 @@ export class OrganizationService {
   }
   /*************************************************************************************** */
 
-  async createOrganization(orgData) {
+  async createOrganization(orgData,file) {
     const organization_id = await sequelize.transaction(async (t) => {
       const account_id = await this.accountService.createAccount(orgData, t);
 
@@ -37,7 +37,7 @@ export class OrganizationService {
         org_abbreviation: orgData.org_abbreviation,
         org_description: orgData.org_description,
         org_social_link: orgData.org_social_link,
-        org_picture: orgData.org_picture,
+        org_picture:file.path,
         isActive: false,
         account_id: account_id,
         location_id: location_id,

@@ -1,6 +1,6 @@
 import { ApiResponse } from "../utils/apiResponse.js";
 import * as httpStatus from "../utils/http.status.js";
-import { CustomError } from "../error/CustomError.js";
+import { CustomError } from "./CustomError.js";
 
 // helper function
 export const handleControllerError = (res, error) => {

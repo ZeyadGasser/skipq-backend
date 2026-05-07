@@ -5,6 +5,7 @@ import { requireAuth } from "../middlewares/requireAuth.middlewares.js";
 import { USER_ROLES } from "../utils/user.roles.js";
 import { requireRole } from "../middlewares/requireRole.middlewares.js";
 import { rateLimiter } from "../middlewares/rate.limiter.middleware.js";
+import { upload } from "../middlewares/upload.middleware.js";
 
 export const router = express.Router();
 // /api/organizations/signup
@@ -13,6 +14,7 @@ router
   .route("/signup")
   .post(
     rateLimiter(60 * 60 * 1000, 10),
+    upload.single("org_picture"),
     validateSignupOrganization,
     orgController.signupOrganization,
   );

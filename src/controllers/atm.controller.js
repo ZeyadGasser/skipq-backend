@@ -1,7 +1,7 @@
 import * as httpStatus from "../utils/http.status.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { handleControllerError } from "../error/handleControllerError.js";
-
+import { logger } from "../../shared/logger/logger.js";
 export class AtmController {
   constructor(atmService) {
     this.atmService = atmService;
@@ -13,7 +13,7 @@ export class AtmController {
       const searchParams = req.searchParams;
 
       const atms = await this.atmService.findNearbyAtms(searchParams);
-
+      logger.info("Nearby ATMs fetched successfully");
       return ApiResponse.success(
         res,
         httpStatus.SUCCESSFULL,
@@ -21,7 +21,9 @@ export class AtmController {
         { atms },
         httpStatus.OK,
       );
+      
     } catch (error) {
+      logger.error(error);
       handleControllerError(res, error);
     }
   }; // End getNearbyAtms
