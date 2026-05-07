@@ -1,7 +1,7 @@
 import * as httpStatus from "../utils/http.status.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { handleControllerError } from "../error/handleControllerError.js";
-import { logger } from "../../shared/logger/logger.js";
+import {logger} from "../shared/logger/logger.js"
 export class AtmController {
   constructor(atmService) {
     this.atmService = atmService;
