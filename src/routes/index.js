@@ -4,9 +4,12 @@ import { router as branchRoute } from "./branch.routes.js";
 import { router as atmRoute } from "./atm.routes.js";
 import * as httpStatus from "../utils/http.status.js";
 import { rateLimiter } from "../middlewares/rate.limiter.middleware.js";
-
+import swaggerUi from "swagger-ui-express";
+import {swaggerSpec} from  "../../swagger.js"
 export const mapRoutes = (app) => {
   // routes
+  app.use("/api-docs",swaggerUi.serve,swaggerUi.setup(swaggerSpec));
+
   app.use("/api/organizations", rateLimiter(60 * 1000, 100), organizationRoute);
 
   app.use("/api/auth", rateLimiter(60 * 1000, 100), accountRoute);
@@ -24,6 +27,25 @@ export const mapRoutes = (app) => {
   );
 
   //for test
+  /**
+   * @openapi
+   * /api/national-bank/v1:
+   *  get:
+   *    tags:
+   *      - National Bank
+   *    summary: Get national bank ATM mock status
+   *    responses:
+   *       200:
+   *         description: Success
+   *       400:
+   *         description: Invalid request
+   *       401:
+   *         description: Unauthorized
+   *       403:
+   *         description: Forbidden
+   *       500:
+   *         description: Internal server error
+   */
   app.get("/api/national-bank/v1", (req, res) => {
     return res.json({
       isActive: true,
@@ -31,6 +53,25 @@ export const mapRoutes = (app) => {
       denominations: [{ value: 100 }, { value: 200 }],
     });
   });
+  /**
+   * @openapi
+   * /api/national-bank/v1/check:
+   *  get:
+   *    tags:
+   *      - National Bank
+   *    summary: Check national bank withdrawal mock availability
+   *    responses:
+   *       200:
+   *         description: Success
+   *       400:
+   *         description: Invalid request
+   *       401:
+   *         description: Unauthorized
+   *       403:
+   *         description: Forbidden
+   *       500:
+   *         description: Internal server error
+   */
   app.get("/api/national-bank/v1/check", (req, res) => {
     return res.json({
       available: true,
