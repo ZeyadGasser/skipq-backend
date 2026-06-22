@@ -5,7 +5,8 @@
   "type": "module",
   "main": "app.js",
   "scripts": {
-    "_": "nodemon src/app.js",
+    "start": "nodemon src/app.js",
+    "seed": "node src/seeders/index.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "format": "prettier --write \"src/**/*.js\""
   },
