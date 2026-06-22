@@ -1,74 +1,77 @@
 # SkipQ Backend
 
-SkipQ is a queue-management backend designed for high-traffic environments such as government service centers, public institutions, banks, and any organization where people need to wait for physical services. The platform helps users discover nearby branches or ATMs, understand service availability, and make better decisions before joining a queue.
+SkipQ is a queue-management backend designed for high-traffic environments such as government service centers, public institutions, banks, and other organizations that serve large numbers of visitors.
 
-At its core, SkipQ connects organizations, branches, locations, ATMs, authentication, and external intelligence services into one API. It is built with Node.js, Express, Sequelize, and PostgreSQL, and is structured to support real-world queue operations such as location-based discovery, crowd awareness, cash availability checks, and organization administration.
+The platform helps users discover nearby branches and ATMs, check service availability, and make informed decisions before visiting a location. It also supports organization onboarding, branch management, authentication, and integration with external services.
 
-The backend is also designed to integrate with a separate AI service that analyzes camera images or stream frames and returns the number of people currently waiting. This makes SkipQ more than a static directory: it can become a live queue-awareness system that helps reduce wasted time and improves the experience for citizens, customers, and service providers.
+Built with Node.js, Express, Sequelize, and PostgreSQL, SkipQ follows a layered architecture that promotes maintainability, scalability, and clear separation of concerns.
 
-SkipQ provides authentication, organization onboarding, nearby branch and ATM discovery, ATM cash availability checks, Swagger API documentation, and a manual database seeding system.
-
-The project follows a layered architecture:
-
-- Routes define the public API surface.
-- Controllers handle HTTP requests and responses.
-- Services contain business workflows.
-- Repositories isolate database access.
-- Sequelize models define PostgreSQL tables and relationships.
+---
 
 ## Features
 
-- JWT-based authentication with refresh-token cookies.
-- Organization signup and administration.
-- Role-based access control for protected actions.
-- Branch and ATM lookup by organization and location.
-- ATM withdrawal availability checks through a bank provider abstraction.
-- PostgreSQL persistence through Sequelize models.
-- Manual seeders without `sequelize-cli` seed commands.
-- Swagger documentation at `/api-docs`.
-- Jest and Supertest test setup.
+* JWT-based authentication with refresh-token support.
+* Organization registration and administration.
+* Role-based authorization.
+* Branch discovery and management.
+* ATM discovery and availability checks.
+* Integration with external service providers.
+* PostgreSQL persistence through Sequelize ORM.
+* Swagger/OpenAPI documentation.
+* Automated testing with Jest and Supertest.
+* Structured logging with Pino.
 
-## AI Queue Intelligence Service
+---
 
-SkipQ is designed to work with a separate backend service that runs the AI model responsible for queue analysis.
+## Architecture
 
-That AI service receives images or frames from the live camera stream, processes them with the model, and returns the number of people currently standing in the queue. The main SkipQ backend can then use that count as part of ATM or branch status responses, such as estimated crowding, waiting load, or service availability.
+The project follows a layered architecture:
 
-Current integration point:
+```text
+Client
+   |
+   v
+Routes
+   |
+Controllers
+   |
+Services
+   |
+Repositories
+   |
+PostgreSQL
 
-- The bank provider layer normalizes external ATM data.
-- `NationalBankProvider` currently points to `http://localhost:5001/api/national-bank/v1` as a test provider.
-- The external provider response includes `countPeople`, which represents the number of people detected in the queue.
-
-Expected AI service responsibility:
-
-- Accept camera frames or image snapshots.
-- Run the people-counting AI model.
-- Return a normalized count, for example:
-
-```json
-{
-  "isActive": true,
-  "countPeople": 12,
-  "denominations": [{ "value": 100 }, { "value": 200 }]
-}
+Services
+   |
+   +--> External Providers
+   +--> Queue Intelligence Services
 ```
 
-This repository does not contain the AI model itself. It contains the main API backend that can consume the AI service output.
+### Layers
+
+* **Routes** expose API endpoints.
+* **Controllers** handle HTTP requests and responses.
+* **Services** implement business logic and workflows.
+* **Repositories** encapsulate database access.
+* **Models** define database entities and relationships.
+
+---
 
 ## Tech Stack
 
-- Node.js
-- Express.js
-- Sequelize
-- PostgreSQL
-- JWT
-- bcrypt
-- Joi
-- Swagger UI / swagger-jsdoc
-- Jest
-- Supertest
-- Pino
+* Node.js
+* Express.js
+* PostgreSQL
+* Sequelize ORM
+* JWT Authentication
+* bcrypt
+* Joi Validation
+* Swagger / OpenAPI
+* Jest
+* Supertest
+* Pino Logger
+
+---
 
 ## Project Structure
 
@@ -78,30 +81,32 @@ src/
   controllers/     HTTP controllers
   dtos/            Response DTOs
   error/           Error helpers
-  interfaces/      Repository/provider contracts
-  middlewares/     Auth, validation, rate limit, upload, CORS
-  migrations/      Sequelize migration files
+  interfaces/      Contracts and abstractions
+  middlewares/     Authentication, validation, rate limiting, CORS
+  migrations/      Database migrations
   models/          Sequelize models and associations
-  repositories/    Database access layer
-  routes/          Express routes and Swagger annotations
-  seeders/         Manual seeders
-  services/        Business logic and external providers
+  repositories/    Data access layer
+  routes/          API routes and Swagger annotations
+  seeders/         Database seeders
+  services/        Business logic and external integrations
   shared/          Shared infrastructure
   tests/           Unit and integration tests
-  utils/           Constants and helpers
+  utils/           Utility functions and constants
 ```
+
+---
 
 ## Requirements
 
-- Node.js 18+
-- PostgreSQL
-- npm
+* Node.js 18+
+* PostgreSQL
+* npm
+
+---
 
 ## Environment Variables
 
-Create a `.env` file in the project root. Use `.env.example` as the starting point.
-
-Required values:
+Create a `.env` file in the project root using `.env.example` as a reference.
 
 ```env
 PORT=3000
@@ -110,11 +115,6 @@ DB_USER=postgres
 DB_PASS=password
 DB_NAME=skipq
 DB_HOST=localhost
-DB_CONNECTION_ERROR_CODE=0
-
-MAX_ATTEMPTS=5
-SUCCESS=1
-FAILURE=0
 
 JWT_SECRET_ACCESS=your_access_secret
 JWT_SECRET_REFRESH=your_refresh_secret
@@ -128,148 +128,121 @@ CORS_ORIGINS=http://localhost:5173,http://localhost:3000
 DEVELOPER_ADMIN_PASSWORD=optional_admin_password
 ```
 
-If `DEVELOPER_ADMIN_PASSWORD` is not set, the seeder generates a password and prints it in the console.
+---
 
 ## Installation
+
+Install dependencies:
 
 ```bash
 npm install
 ```
 
+---
+
 ## Database Setup
 
-Run your migrations before seeding the database.
-
-If you use the existing Sequelize CLI migration setup:
+Run database migrations:
 
 ```bash
 npx sequelize-cli db:migrate
 ```
 
-The project seeders are manual JavaScript files and do not use `sequelize-cli` seed commands.
-
-## Seeding
-
-Seed the database with:
+Seed the database:
 
 ```bash
 npm run seed
 ```
 
-The seeding system creates or checks:
+---
 
-- Roles
-- Account statuses
-- Account types
-- Governorates
-- Locations
-- Users
-- Accounts
-- Organization
-- Branch
-- ATM
-- Runtime token tables
-- Permissions check
+## Running the Application
 
-Default administrator:
-
-```text
-Email: zeyadgasser2510@gmail.com
-Role: DEVELOPER_ADMIN
-```
-
-There is currently no `Permission` model/table in this codebase, so the permissions seeder logs that permissions are skipped instead of creating a non-existent table.
-
-All seeders use `findOrCreate` to avoid duplicate records.
-
-## Running The App
+Start the development server:
 
 ```bash
 npm start
 ```
 
-The server starts on:
+The application will be available at:
 
 ```text
 http://localhost:<PORT>
 ```
 
-Swagger docs:
+---
+
+## API Documentation
+
+Swagger documentation is available at:
 
 ```text
 http://localhost:<PORT>/api-docs
 ```
 
-## API Overview
+Use the Swagger UI to explore endpoints, request schemas, and responses.
 
-Main route groups:
-
-- `POST /api/auth/login`
-- `POST /api/auth/refresh-token`
-- `POST /api/auth/logout`
-- `POST /api/auth/forgot-password`
-- `POST /api/auth/verify-otp`
-- `POST /api/auth/reset-password`
-- `POST /api/organizations/signup`
-- `GET /api/organizations`
-- `PATCH /api/organizations/{id}`
-- `GET /api/organizations/{orgId}/branches`
-- `GET /api/organizations/{orgId}/branches/{branchId}/services`
-- `GET /api/organizations/{orgId}/banks`
-- `GET /api/organizations/{orgId}/banks/{bankId}/atms`
-- `GET /api/organizations/{orgId}/banks/{bankId}/atms/{atmId}`
-- `GET /api/organizations/{orgId}/banks/{bankId}/atms/{atmId}/check-withdraw`
-
-Use `/api-docs` for the full Swagger schema.
+---
 
 ## Scripts
+
+Start the server:
 
 ```bash
 npm start
 ```
 
-Start the server with Nodemon.
+Seed the database:
 
 ```bash
 npm run seed
 ```
 
-Run the manual seeders.
+Run tests:
 
 ```bash
 npm test
 ```
 
-Run tests.
+Format source files:
 
 ```bash
 npm run format
 ```
 
-Format source files with Prettier.
+---
 
-## Authentication Notes
+## Authentication
 
-- Login returns an access token.
-- Refresh token is stored as an HTTP-only cookie.
-- Protected routes use `requireAuth`.
-- Role-restricted routes use `requireRole`.
+* Login returns an access token.
+* Refresh tokens are stored in HTTP-only cookies.
+* Protected routes require authentication.
+* Restricted actions require appropriate roles.
+
+---
 
 ## Testing
+
+Run all tests:
 
 ```bash
 npm test
 ```
 
-Tests are located under:
+Tests are located in:
 
 ```text
 src/tests/
 ```
 
-## Notes
+---
 
-- This backend expects PostgreSQL.
-- Some database columns use PostgreSQL-specific features such as `CITEXT` and geometry types.
-- Runtime records such as refresh tokens, reset tokens, and OTPs are not seeded with fake active values because they are generated by authentication flows.
-- The AI people-counting model is intentionally separated into another backend service so it can scale independently from the main API.
+## Future Enhancements
+
+* Real-time queue monitoring.
+* Queue length estimation through AI-powered services.
+* Live branch occupancy tracking.
+* Notification and appointment systems.
+* Analytics and reporting dashboards.
+
+
